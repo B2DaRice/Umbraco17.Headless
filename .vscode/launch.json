@@ -1,0 +1,46 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "API: Run",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "api: build",
+      "program": "${workspaceFolder}/src/Umb17.Portfolio.API/bin/Debug/net10.0/Umb17.Portfolio.API.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/Umb17.Portfolio.API",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Now listening on:\\s+(https://localhost:63177)",
+        "uriFormat": "%s/umbraco"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development",
+        "ASPNETCORE_URLS": "https://localhost:63177"
+      }
+    },
+    {
+      "name": "Frontend: Dev",
+      "type": "node",
+      "request": "launch",
+      "preLaunchTask": "api: wait",
+      "runtimeExecutable": "npm.cmd",
+      "runtimeArgs": ["run", "dev"],
+      "cwd": "${workspaceFolder}/frontend/Umb17.Portfolio.Web.React",
+      "console": "integratedTerminal",
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "Local:\\s+(https://localhost:6317/?)",
+        "uriFormat": "%s"
+      }
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Full Stack: API + React",
+      "configurations": ["API: Run", "Frontend: Dev"],
+      "stopAll": true
+    }
+  ]
+}

@@ -1,0 +1,48 @@
+@import "tailwindcss";
+@import "./generated/umbraco-theme-colors.css";
+@source inline("p-[{0..200}px] rounded-[{0..200}px] border-[{0..200}px]");
+
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
+@theme {
+  --color-site-bg-dark: var(--site-bg-color-dark);
+  --color-site-bg-light: var(--site-bg-color-light);
+  --color-site-muted-dark: color-mix(in srgb, var(--site-text-color-dark) 14%, var(--site-bg-color-dark));
+  --color-site-muted-light: color-mix(in srgb, var(--site-text-color-light) 14%, var(--site-bg-color-light));
+  --color-site-primary-dark: var(--site-primary-color-dark);
+  --color-site-primary-light: var(--site-primary-color-light);
+  --color-site-text-dark: var(--site-text-color-dark);
+  --color-site-text-light: var(--site-text-color-light);
+}
+
+:root {
+  --site-bg-color-dark: #111827;
+  --site-bg-color-light: #f7f8f5;
+  --site-primary-color-dark: #a78bfa;
+  --site-primary-color-light: #4b2e68;
+  --site-text-color-dark: #f8fafc;
+  --site-text-color-light: #0f172a;
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: #1f2933;
+  background: #f7f8f5;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+}
+
+button,
+input,
+textarea,
+select {
+  font: inherit;
+}

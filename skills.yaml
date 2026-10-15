@@ -1,0 +1,107 @@
+skills:
+  portfolioworker:
+    description: >
+      Current project context and working instructions for the Umb17 portfolio site.
+    instructions: |
+      Always show planned file additions/changes and wait for approval before editing files.
+      When the user asks to see patches before applying them, include every intended edit in the shown patch and wait for explicit approval before applying, including small TypeScript-safety fixes, cleanup changes, or related adjustments.
+      After meaningful changes to architecture, logic, workflows, setup, or usage, automatically update relevant README files. README-only updates do not require separate approval.
+
+      Goal: personal portfolio site with an Umbraco 17 LTS headless/backoffice API and independently deployable frontend clients.
+
+      Workspace: C:\Users\bgarlick\source\repos\codez\Umb17-stub. Current folder name may be temporary. Repo currently uses Umb17.Portfolio.slnx.
+
+      Projects:
+      - API: src\Umb17.Portfolio.API, Umbraco 17.5.3, net10.0.
+      - React frontend: frontend\Umb17.Portfolio.Web.React, Vite + React + TypeScript + Tailwind.
+
+      Local dev:
+      - VS Code compound launch: Full Stack: API + React.
+      - Frontend launch uses the api: wait task before starting Vite so the API manifest endpoint is ready first.
+      - React frontend runs at https://localhost:6317.
+      - React admin sync route runs at https://localhost:6317/admin.
+      - Umbraco API/backoffice runs at https://localhost:63177.
+      - Backoffice URL: https://localhost:63177/umbraco.
+      - React .env.development sets VITE_UMBRACO_API_ORIGIN=https://localhost:63177.
+      - Use npm.cmd, not plain npm, in PowerShell.
+
+      API notes:
+      - Program.cs includes AddDeliveryApi().
+      - appsettings.json enables public Delivery API for content/media.
+      - Rich text Delivery API values may still come through as { markup, blocks }; React templates should render the markup value.
+      - CORS allows https://localhost:6317.
+      - /api/frontend/manifest returns Umbraco document type metadata for frontend model sync/generation, including property aliases, editor/storage type, data type identity/editor UI/configuration, mandatory flags, variation flags, and sort order.
+      - Database should use normal Umbraco installer flow; no local SQL Server connection string is configured.
+      - SQLite install created local files under src\Umb17.Portfolio.API\umbraco\Data, which are gitignored.
+
+      Frontend notes:
+      - Vite dev server uses HTTPS via @vitejs/plugin-basic-ssl.
+      - Frontend should remain deployable separately from the API; do not build React into API wwwroot unless user changes direction.
+      - React has a small Delivery API foundation: src\api\umbraco.ts, src\types\umbraco.ts, page/block renderers, HomePage/UnknownPage components, and an API status splash while checking for homepage content.
+      - Site startup waits for /api/frontend/manifest before checking Delivery API content; content fetches retry briefly before showing no-content/error states.
+      - Main at / is the SPA/global metadata shell for global tags/scripts/header/footer/SEO; the initial renderable content page is a direct homePage child.
+      - /admin has an Umbraco Sync dashboard comparing src\generated\umbraco-model-manifest.ts against the API manifest, grouped as stale, missing, changed, and synced.
+      - Sync buttons confirm, show a restart splash, POST to the Vite-only /__admin/umbraco-sync endpoint, run scripts\generate-umbraco-models.mjs, update src\generated, restart Vite, and return to /admin.
+      - Generated models intentionally do not emit KnownContentType/KnownBlockType unions for now.
+      - Base Umbraco handshake types keep properties as object; concrete generated models provide typed properties for templates.
+      - Rich text properties generate as RichTextValue | null. Templates should render markup and use direct content.properties.foo access, not string-key helper getters.
+
+      Verification:
+      - API build: dotnet build .\Umb17.Portfolio.slnx --no-restore.
+      - React build: npm.cmd run build from frontend\Umb17.Portfolio.Web.React.
+      - Known warnings: API build emits NU1903 for Microsoft.OpenApi 2.4.1 and SQLitePCLRaw.lib.e_sqlite3 2.1.11 from upstream/transitive dependencies.
+  readmeSanityCheck:
+    description: >
+      Thorough project documentation audit for checking whether READMEs match the current API and frontend implementation.
+    instructions: |
+      Run this skill only when the user asks for a README sanity check or documentation audit.
+
+      Goal: perform a thorough walkthrough of the project implementation and verify that root/API/frontend READMEs accurately describe current behavior, setup, architecture, workflows, and known warnings.
+
+      Required walkthrough:
+      - Read README.md, src\Umb17.Portfolio.API\README.md, frontend\Umb17.Portfolio.Web.React\README.md, and skills.yaml.
+      - Walk API root nodes: Umb17.Portfolio.slnx, src\Umb17.Portfolio.API\Umb17.Portfolio.API.csproj, Program.cs, appsettings.json, launchSettings.json, and any API files reachable from those.
+      - Walk React root nodes: package.json, vite.config.ts, tsconfig files, src\main.tsx, src\App.tsx, src\api, src\admin, src\renderers, src\pages, src\components, src\types, src\generated, scripts, and vite.plugins.
+      - Walk local orchestration from .vscode\launch.json and .vscode\tasks.json.
+      - Check generated/sync behavior by comparing src\generated\umbraco-model-manifest.ts, src\generated\umbraco-content-models.ts, scripts\generate-umbraco-models.mjs, src\admin\syncComparison.ts, and the API /api/frontend/manifest endpoint implementation.
+      - If the API is running or can be safely started, query https://localhost:63177/api/frontend/manifest and compare current Umbraco document/data type metadata against README model documentation.
+      - Check whether README instructions still match actual commands, ports, HTTPS usage, environment variables, build behavior, startup behavior, sync workflow, generated model conventions, rich text handling, and known warnings.
+      - Identify stale README claims, missing README coverage, ambiguous setup instructions, undocumented workflows, and code behavior that contradicts documentation.
+      - Prefer exact file references and concise findings grouped by README file.
+      - After findings, propose or apply README updates according to the active project instruction: README-only updates do not require separate approval.
+      - Run verification when relevant: dotnet build .\Umb17.Portfolio.slnx --no-restore and npm.cmd run build from frontend\Umb17.Portfolio.Web.React.
+      - Report commands that could not be run and why.
+
+      Audit standard:
+      - Be deliberately thorough; this skill is not expected to run often.
+      - Do not rely only on README prose. Trace actual dependency/root graphs and implementation entry points.
+      - Treat documentation as stale until checked against code.
+      - Make the minimal README edits needed to correct drift. Do not restructure, rephrase broadly, or churn formatting unless the existing structure prevents accurate documentation. If broader README structure changes seem necessary, do not edit yet; explain why the structure change is needed, show the planned change, and wait for the user's go-ahead.
+      - Preserve the project direction: Umbraco 17 LTS API/backoffice, independent React frontend, API as content source of truth, and dev-only React admin sync workflow.
+  clean-proj:
+    description: >
+      Audit this repository for dev-related code cruft, local-development leftovers,
+      debugging artifacts, temporary scaffolding, and similar cleanup candidates, then
+      remove approved items only after explicit user confirmation.
+    instructions: |
+      Run this skill only when the user asks to clean the project, remove dev cruft, audit local-dev leftovers, or perform a codebase cleanup pass.
+
+      Goal: identify and safely remove development-only cruft from the current repository without deleting anything until the user approves the proposed removals.
+
+      Required workflow:
+      - Inspect the repository broadly before editing. Include source, frontend, configuration, scripts, docs, and local orchestration files.
+      - Look for dev-related cleanup candidates such as console logs, debugger statements, temporary comments, TODO/FIXME notes that are no longer actionable, commented-out code, local-only test scaffolding, mock data accidentally wired into production paths, hard-coded localhost URLs outside intended dev config, ad hoc debug endpoints, throwaway scripts, unused generated artifacts, stray sample files, and obsolete local-dev instructions.
+      - Distinguish between true cruft and intentional development infrastructure. Do not mark legitimate local setup files, documented dev workflows, launch profiles, Vite/Umbraco dev config, or README guidance as cruft merely because they are development-related.
+      - Produce a concise report before making any edits. Group findings by file, include exact paths, summarize why each item appears removable, and note any uncertainty.
+      - Recommend one of: remove, keep, or needs user decision for each finding.
+      - Ask the user to confirm which removals they approve.
+      - Do not delete or modify code until the user explicitly confirms the deletion/removal set.
+      - After approval, make only the approved removals. Preserve behavior and avoid broad refactors.
+      - If removals affect setup, workflows, or documentation, update the relevant README according to the active project instruction.
+      - Run focused verification after edits. Prefer dotnet build .\Umb17.Portfolio.slnx --no-restore for API-impacting changes and npm.cmd run build from frontend\Umb17.Portfolio.Web.React for frontend-impacting changes.
+      - Report what was removed, what was left in place, verification results, and any remaining cleanup candidates requiring judgment.
+
+      Audit standard:
+      - Be conservative. When in doubt, report the candidate and ask rather than deleting it.
+      - Treat "dev-related" as context-sensitive: local development configuration can be correct and necessary, while debug leftovers in runtime code are likely cleanup candidates.
+      - Do not remove secrets handling, environment examples, launch settings, or local HTTPS configuration unless they are clearly obsolete or unsafe and the user approves.

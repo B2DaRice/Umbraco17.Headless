@@ -1,0 +1,89 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "frontend: dev",
+      "type": "shell",
+      "command": "npm.cmd",
+      "args": ["run", "dev"],
+      "options": {
+        "cwd": "${workspaceFolder}/frontend/Umb17.Portfolio.Web.React"
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "vite",
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": ".*",
+          "endsPattern": "Local:\\s+https://localhost:6317/"
+        }
+      }
+    },
+    {
+      "label": "api: wait",
+      "type": "shell",
+      "command": "node",
+      "args": ["scripts/wait-for-umbraco-api.mjs"],
+      "options": {
+        "cwd": "${workspaceFolder}/frontend/Umb17.Portfolio.Web.React"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "frontend: build",
+      "type": "shell",
+      "command": "npm.cmd",
+      "args": ["run", "build"],
+      "options": {
+        "cwd": "${workspaceFolder}/frontend/Umb17.Portfolio.Web.React"
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "api: build",
+      "type": "process",
+      "command": "dotnet",
+      "args": ["build", "${workspaceFolder}/Umb17.Portfolio.slnx", "--no-restore"],
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "api: run",
+      "type": "process",
+      "command": "dotnet",
+      "args": [
+        "run",
+        "--project",
+        "${workspaceFolder}/src/Umb17.Portfolio.API/Umb17.Portfolio.API.csproj",
+        "--launch-profile",
+        "Umb17.Portfolio.API"
+      ],
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "dotnet",
+        "pattern": {
+          "regexp": "^$"
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "Building...",
+          "endsPattern": "Now listening on:\\s+https://localhost:63177"
+        }
+      }
+    },
+    {
+      "label": "build: all",
+      "dependsOrder": "sequence",
+      "dependsOn": ["frontend: build", "api: build"],
+      "problemMatcher": []
+    },
+    {
+      "label": "dev: all",
+      "dependsOrder": "parallel",
+      "dependsOn": ["api: run", "frontend: dev"],
+      "problemMatcher": []
+    }
+  ]
+}
